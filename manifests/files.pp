@@ -70,6 +70,13 @@ define swap_file::files (
       mode    => '0600',
       require => Exec["Create swap file ${swapfile}"],
     }
+    
+    if $::selinux {
+      File[$swapfile] {
+        seltype => 'swapfile_t',
+      }
+    }
+
     exec { "Attach swap file ${swapfile}":
       command => "/sbin/mkswap ${swapfile} && /sbin/swapon ${swapfile}",
       require => File[$swapfile],
